@@ -4,13 +4,7 @@
 -- Derived from ERC-20 transfers; balances are scaled to token units via decimals.
 
 with token_meta as (
-    select * from (values
-        (lower('0xdC035D45d973E3EC169d2276DDab16f1e407384F'), 18),
-        (lower('0xa3931d71877C0E7a3148CB7Eb4463524FEc27fbD'), 18),
-        (lower('0x28B3a8fb53B741A8Fd78c0fb9A6B2393d896a43d'),  6),
-        (lower('0xe2e7a17dFf93280dec073C995595155283e3C372'),  6),
-        (lower('0xfE6eb3b609a7C8352A241f7F3A21CEA4e9209B8f'), 18)
-    ) as t(address, decimals)
+    select address, decimals from {{ ref('tokens') }}
 )
 
 , transfers as (
@@ -21,11 +15,7 @@ with token_meta as (
         cast(value as decimal(38, 0)) as raw_amount
     from {{ source('erc20_ethereum', 'evt_Transfer') }}
     where lower(cast(contract_address as varchar)) in (
-        lower('0xdC035D45d973E3EC169d2276DDab16f1e407384F'),
-        lower('0xa3931d71877C0E7a3148CB7Eb4463524FEc27fbD'),
-        lower('0x28B3a8fb53B741A8Fd78c0fb9A6B2393d896a43d'),
-        lower('0xe2e7a17dFf93280dec073C995595155283e3C372'),
-        lower('0xfE6eb3b609a7C8352A241f7F3A21CEA4e9209B8f')
+        select address from token_meta
     )
 )
 

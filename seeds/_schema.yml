@@ -77,6 +77,29 @@ seeds:
         description: Treasury, Allocation, Operations, etc.
       - name: name
 
+  - name: tokens_seed
+    description: Scratch — Sky USDS plus Spark Savings vaults. Seeds `models/scratch/reference/tokens.sql`.
+    config:
+      column_types:
+        address: varchar
+        name: varchar
+        underlying: varchar
+        decimals: integer
+    columns:
+      - name: address
+        description: Token contract address (lowercase).
+        data_tests:
+          - unique
+          - not_null
+      - name: name
+        data_tests:
+          - not_null
+      - name: underlying
+        description: Underlying asset for ERC4626 vault shares; NULL for base tokens.
+      - name: decimals
+        data_tests:
+          - not_null
+
   - name: dim_asset_seed
     description: Hand-curated assets per domain. Includes pricing/decimals metadata.
     config:
